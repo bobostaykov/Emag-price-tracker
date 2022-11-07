@@ -14,11 +14,11 @@ CURRENT_PRICE_FILE = 'current_price.txt'
 
 
 def main():
-    if len(argv) < 2 or len(argv) > 3:
-        usage()
-    url = argv[1]
     try:
         config()
+        if len(argv) < 2 or len(argv) > 3:
+            usage()
+        url = argv[1]
         item_name, price = get_name_and_price(url)
         compare_to_previous_price(url, item_name, price)
         persist_price(price)
@@ -76,9 +76,9 @@ def compare_to_previous_price(url, item_name, current_price):
 def notify(item_name, url, previous_price, current_price):
     """ Sends an email about a price drop """
 
-    sender_email = os.environ.get('sender-email')
-    receiver_email = os.environ.get('sender-email')
-    email_password = os.environ.get('email-password')
+    sender_email = os.environ.get('SENDER_EMAIL')
+    receiver_email = os.environ.get('RECEIVER_EMAIL')
+    email_password = os.environ.get('EMAIL_PASSWORD')
     text = f'''The price of item
 {item_name}
 went from {previous_price} to {current_price}!
