@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # custom
-current_price.txt
-log.log
-start_script.sh
+*.sh
+item_*
 .idea
