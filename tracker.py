@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
-ITEM_DIR_PREFIX = 'item_'
+ITEMS_DIR = 'items'
 CURRENT_PRICE_FILE = 'current_price.txt'
 LOG_FILE = 'log.log'
 
@@ -18,22 +18,22 @@ LOG_FILE = 'log.log'
 def main():
     try:
         item_id = argv[2]
-        item_dir = ITEM_DIR_PREFIX + item_id
-        config(item_dir)
+        config(item_id)
         if len(argv) < 3 or len(argv) > 4:
             usage()
         url = argv[1]
         price = get_price(url)
         compare_to_previous_price(url, item_id, price)
-        persist_price(item_dir, price)
+        persist_price(item_id, price)
     except Exception as e:
         log.error(e)
 
 
-def config(item_dir):
+def config(item_id):
     """ Configures directories and files """
 
     load_dotenv()
+    item_dir = os.path.join(ITEMS_DIR, item_id)
     if not os.path.exists(item_dir):
         os.mkdir(item_dir)
     Path(os.path.join(item_dir, CURRENT_PRICE_FILE)).touch(exist_ok=True)
@@ -59,7 +59,7 @@ def get_price(url):
 def compare_to_previous_price(url, item_id, current_price):
     """ Compares current price to previous one and send a notification if needed """
 
-    with open(os.path.join(ITEM_DIR_PREFIX + item_id, CURRENT_PRICE_FILE), 'r') as file:
+    with open(os.path.join(ITEMS_DIR, item_id, CURRENT_PRICE_FILE), 'r') as file:
         previous_price_str = file.read()
         if previous_price_str == '':
             log.info(f'First run, price {current_price}')
@@ -99,10 +99,10 @@ def notify(item_id, url, previous_price, current_price):
         log.info('Sending email notification')
 
 
-def persist_price(item_dir, price):
+def persist_price(item_id, price):
     """ Writes the current price to a file to compare later """
 
-    with open(os.path.join(item_dir, CURRENT_PRICE_FILE), 'w') as file:
+    with open(os.path.join(ITEMS_DIR, item_id, CURRENT_PRICE_FILE), 'w') as file:
         file.write(str(price))
 
 

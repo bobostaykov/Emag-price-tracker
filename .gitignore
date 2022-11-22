@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # custom
-*.sh
-item_*
 .idea
+items
+scripts
+track_item.sh
