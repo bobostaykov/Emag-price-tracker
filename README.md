@@ -1,8 +1,19 @@
-Emag Price Tracker
-==================
+Price Tracker
+=============
 
-A simple script that sends a notification when a particular item's price on www.emag.bg changes
+A script that sends an email notification when a specified item's price changes. Currently, the following websites are
+supported:
 
-The idea is to make it run automatically daily, e.g. with a Cron or Launchd job
+- www.emag.bg
+- www.ozone.bg
+- www.ardes.bg
 
-You should provide an `.env` file with Google sender email, password and receiver email for the notifications
+The idea is to make it run automatically at a specific interval, e.g. with a Cron or Launchd job.
+
+You should provide an `.env` file with:
+
+- a Google sender email (`SENDER_EMAIL` variable)
+- password (`EMAIL_PASSWORD` variable)
+- receiver email (`RECEIVER_EMAIL` variable)
+
+for the notifications.

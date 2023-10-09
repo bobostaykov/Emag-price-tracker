@@ -131,4 +131,4 @@ dmypy.json
 # custom
 .idea
 items
-track_emag_item.sh alias
+track-item.sh alias

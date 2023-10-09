@@ -1,5 +1,6 @@
 import logging as log
 import os
+import re
 import smtplib
 import ssl
 from email.message import EmailMessage
@@ -43,7 +44,7 @@ def config(item_id):
 
 
 def get_price(url):
-    """ Returns the current price for the tracked item as a float """
+    """ Invokes the appropriate get_price_from_* function based on the url """
 
     try:
         page = requests.get(url)
@@ -51,9 +52,48 @@ def get_price(url):
         # try once more
         page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
+    if 'emag.bg' in url:
+        return get_price_from_emag(soup)
+    elif 'ozone.bg' in url:
+        return get_price_from_ozone(soup)
+    elif 'ardes.bg' in url:
+        return get_price_from_ardes(soup)
+    else:
+        usage()
+
+
+def get_price_from_emag(soup):
+    """ Returns the current price for the tracked item as a float """
+
     price_with_currency = soup.find('p', {'class': 'product-new-price'}).text
     price_str = price_with_currency.split()[0]
     formatted_price_str = price_str.replace('.', '').replace(',', '.')
+    return float(formatted_price_str)
+
+
+def get_price_from_ozone(soup):
+    """ Returns the current price for the tracked item as a float """
+
+    special_price = soup.find('p', {'class': 'special-price'})
+    price_str = None
+    if special_price is not None:
+        # There is a discount
+        price_str = special_price.find('span', {'class': 'price'}).text
+    else:
+        # No discount
+        regular_price = soup.find('span', {'class': 'regular-price'})
+        price_str = regular_price.find('span', {'class': 'price'}).text
+    price_str_no_currency = price_str[:-4]
+    formatted_price_str = price_str_no_currency.strip().replace(',', '.')
+    formatted_price_str = re.sub(r'\s+', '', formatted_price_str)
+    return float(formatted_price_str)
+
+
+def get_price_from_ardes(soup):
+    """ Returns the current price for the tracked item as a float """
+
+    price_str = soup.find('span', {'class': 'full-price'}).text
+    formatted_price_str = price_str.strip().split()[0]
     return float(formatted_price_str)
 
 
@@ -112,10 +152,13 @@ def usage():
 
     message = f'''Usage: {argv[0]} url id [boundary_price]
     
-Emag price tracker
+Price tracker
 
 Arguments:    
-  url            URL of item to track
+  url            URL of item to track. Currently supported websites:
+                    - www.emag.bg
+                    - www.ozone.bg
+                    - www.ardes.bg
   id             A string uniquely identifying the tracked item, in case there are multiple
   boundary_price If set, will notify only if current price is below it. Else, will notify on every price drop.'''
 
