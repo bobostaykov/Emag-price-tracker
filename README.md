@@ -14,6 +14,5 @@ You should provide an `.env` file with:
 
 - a Google sender email (`SENDER_EMAIL` variable)
 - password (`EMAIL_PASSWORD` variable)
-- receiver email (`RECEIVER_EMAIL` variable)
 
 for the notifications.

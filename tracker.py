@@ -19,7 +19,7 @@ LOG_FILE = 'log.log'
 
 def main():
     try:
-        if len(argv) < 3 or len(argv) > 4:
+        if len(argv) < 4 or len(argv) > 5:
             usage()
         item_id = argv[2]
         config(item_id)
@@ -126,7 +126,7 @@ def notify(item_id, url, previous_price, current_price):
     """ Sends an email about a price change """
 
     sender_email = os.environ.get('SENDER_EMAIL')
-    receiver_email = os.environ.get('RECEIVER_EMAIL')
+    receiver_email = argv[3]
     email_password = os.environ.get('EMAIL_PASSWORD')
     text = f'The price of item "{item_id}" went from {previous_price} to {current_price}!\n\n{url}'
     message = EmailMessage()
@@ -160,7 +160,8 @@ Arguments:
                     - www.ozone.bg
                     - www.ardes.bg
   id             A string uniquely identifying the tracked item, in case there are multiple
-  boundary_price If set, will notify only if current price is below it. Else, will notify on every price drop.'''
+  email          To which email address to send notifications
+  boundary_price (Optional) If set, will notify only if current price is below it. Else, will notify on every price drop.'''
 
     raise SystemExit(message)
 
