@@ -110,7 +110,7 @@ def compare_to_previous_price(url, item_id, current_price):
             log.info(f'Price {current_price}')
             return
         log.info(f'Price change: {previous_price} -> {current_price}')
-        if len(argv) != 4:
+        if len(argv) != 5:
             notify(item_id, url, previous_price, current_price)
         else:
             boundary_price_str = argv[3]
